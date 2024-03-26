@@ -6,21 +6,47 @@ using UnityEditor;
 [CustomEditor(typeof(WorldSlider))]
 public class WorldSliderEditor : Editor
 {
+    [MenuItem("WorldSlider", menuItem = "GameObject/2D Object/World Slider")]
+    public static void CreateWorldSlider()
+    {
+        var sprite = Sprite.Create(new Texture2D(100, 100), new Rect(0, 0, 100, 100), Vector2.up / 2);
+
+        // create root 
+        var slider = new GameObject("WorldSlider");
+        slider.transform.localScale = new Vector3(1, 0.1f, 1);
+        var sliderComp = slider.AddComponent<WorldSlider>();
+        sliderComp.value = 1;
+
+        // create background and make it red
+        var background = new GameObject("Background");
+        background.transform.SetParent(slider.transform);
+        background.transform.localScale = Vector3.one;
+        sliderComp.background = background.transform;
+
+        var comp = background.AddComponent<SpriteRenderer>();
+        comp.sprite = sprite;
+        comp.color = Color.black;
+        
+        // create fill and make it black
+        var fill = new GameObject("Fill");
+        fill.transform.SetParent(background.transform);
+        fill.transform.localScale = Vector3.one;
+        sliderComp.fill = fill.transform;
+
+        comp = fill.AddComponent<SpriteRenderer>();
+        comp.sprite = sprite;
+        comp.color = Color.red;
+        comp.sortingOrder = 1;
+        EditorUtility.SetDirty(slider);
+    }
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
         var slider = (WorldSlider)target;
-        var value = slider.value;
-        if (!slider.fill) return;
-        slider.fill.localScale = new Vector3(value, 1, 1);
-    }
-    [MenuItem("World Slider", menuItem = "GameObject/2D Object/World Slider")]
-    public static void CreateGameObject()
-    {
-        var slider = Resources.Load("Prefabs/Slider");
-        var instance = Instantiate(slider, Selection.activeTransform);
-        instance.name = slider.name;
-        Selection.activeObject = instance;
+        slider.value = Mathf.Clamp(slider.value, 0, 1);
+        slider.background.GetComponent<SpriteRenderer>().color = slider.backgroundColor;
+        slider.fill.GetComponent<SpriteRenderer>().color = slider.fillColor;
+        slider.fill.localScale = new Vector3(slider.value, 1, 1);
     }
 }
 #endif
@@ -29,13 +55,16 @@ public class WorldSliderEditor : Editor
 public class WorldSlider : MonoBehaviour
 {
     [Range(0, 1)]
-    public float value;
+    public float value = 1;
     public Transform background;
-
     public Transform fill;
+
+    public Color fillColor = Color.red;
+    public Color backgroundColor = Color.black;
 
     void Update()
     {
+        value = Mathf.Clamp(value, 0, 1);
         fill.localScale = new Vector3(value, 1, 1);
     }
 }
