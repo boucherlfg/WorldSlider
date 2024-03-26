@@ -62,9 +62,19 @@ public class WorldSlider : MonoBehaviour
     public Color fillColor = Color.red;
     public Color backgroundColor = Color.black;
 
+    private SpriteRenderer backRenderer;
+    private SpriteRenderer fillRenderer;
+    private void Start()
+    {
+        backRenderer = background.GetComponent<SpriteRenderer>();
+        fillRenderer = fill.GetComponent<SpriteRenderer>();
+    }
     void Update()
     {
         value = Mathf.Clamp(value, 0, 1);
         fill.localScale = new Vector3(value, 1, 1);
+
+        backRenderer.color = backgroundColor;
+        fillRenderer.color = fillColor;
     }
 }
