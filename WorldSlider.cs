@@ -18,6 +18,7 @@ public class WorldSliderEditor : Editor
             slider.transform.SetParent(Selection.activeTransform);
         }
 
+        slider.transform.localPosition = Vector3.zero;
         slider.transform.localScale = Vector3.one;
         var sliderComp = slider.AddComponent<WorldSlider>();
         sliderComp.value = 1;
