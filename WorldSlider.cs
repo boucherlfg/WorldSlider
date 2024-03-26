@@ -17,6 +17,11 @@ public class WorldSliderEditor : Editor
         var sliderComp = slider.AddComponent<WorldSlider>();
         sliderComp.value = 1;
 
+        if (Selection.activeTransform)
+        {
+            slider.transform.SetParent(Selection.activeTransform);
+        }
+
         // create background and make it red
         var background = new GameObject("Background");
         background.transform.SetParent(slider.transform);
